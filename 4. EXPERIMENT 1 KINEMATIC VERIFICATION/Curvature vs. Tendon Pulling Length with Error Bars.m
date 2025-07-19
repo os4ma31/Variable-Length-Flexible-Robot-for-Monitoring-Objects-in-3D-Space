@@ -1,7 +1,7 @@
 % Data
-x = [-10, -18.87, -22.71, -30.1, -36];  % ΔT (Tendon Distance) in mm
-K_exp = [0.0051, 0.0094, 0.0123, 0.01463, 0.0187];   % Experimental curvature (mm^-1)
-K_theo = [0.0052, 0.0098, 0.0117, 0.01556, 0.0181];  % Theoretical curvature (mm^-1)
+x = [-10, -18.87, -22.71, -30.1, -36];      % ΔT (Tendon Distance) in mm
+K_exp = [0.0051, 0.0094, 0.0123, 0.01463, 0.0187]; % Experimental curvature (mm^-1)
+K_theo = [0.0052, 0.0098, 0.0117, 0.01556, 0.0181]; % Theoretical curvature (mm^-1)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Points used to calculate the theoretical values:
@@ -12,11 +12,18 @@ K_theo = [0.0052, 0.0098, 0.0117, 0.01556, 0.0181];  % Theoretical curvature (mm
 % #5 (-0.78, 3)(0, 0)(1, -3.1)"
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Real error values (K_exp - K_theo)
-K_error = abs(K_exp - K_theo);
+% --- Calculations ---
+% Calculate the absolute error (|K_theoretical - K_experimental|)
+K_error = abs(K_theo - K_exp);
+
+% Calculate the error percentage relative to the theoretical value
+Error_percentage = (K_error ./ K_theo) * 100;
+
+% --- Plotting Section ---
+% Create the first figure for the plot
+figure('Name', 'Curvature Plot');
 
 % Plot experimental curvature with error bars
-figure;
 errorbar(x, K_exp, K_error, 'o', ...
     'MarkerFaceColor', 'b', 'Color', 'b', 'LineWidth', 1.5, ...
     'DisplayName', 'Experimental Curvature');
@@ -39,9 +46,32 @@ for i = 1:length(x)
         'FontSize', 10, 'Color', 'r', 'HorizontalAlignment', 'center');
 end
 
-% Labels and formatting
+% Labels and formatting for the plot
 xlabel('\DeltaT (Tendon Pulling Length) [mm]', 'FontSize', 12);
 ylabel('Curvature K [mm^{-1}]', 'FontSize', 12);
 title('Curvature vs. Tendon Pulling Length with Error Bars', 'FontSize', 14);
 legend('Location', 'northwest');
 grid on;
+hold off;
+
+% --- Print Table to Command Window Section ---
+% Display a title for the output in the command window
+fprintf('\n--- Comparison of Experimental and Theoretical Curvature Data ---\n');
+
+% Print the header for the table
+fprintf('%-25s %-25s %-25s %-25s %-20s\n', ...
+    'ΔT (mm)', ...
+    'Experimental K (mm^-1)', ...
+    'Theoretical K (mm^-1)', ...
+    'Absolute Error (mm^-1)', ...
+    'Percentage Error (%)');
+    
+% Print a separator line to make the table easier to read
+fprintf([repmat('-', 1, 125) '\n']);
+
+% Loop through the data and print each row of the table
+% '%.4f' formats the numbers to show four decimal places
+for i = 1:length(x)
+    fprintf('%-25.2f %-25.4f %-25.4f %-25.4f %-20.2f\n', ...
+        x(i), K_exp(i), K_theo(i), K_error(i), Error_percentage(i));
+end
